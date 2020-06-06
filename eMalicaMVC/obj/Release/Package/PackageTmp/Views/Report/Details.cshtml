@@ -1,0 +1,57 @@
+﻿@model eMalicaMVC.ViewModels.Reports.MenuOrderDetails
+
+    <div style="padding:10px;">
+
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="myModalLabel">Podrobnosti po uporabnikih</h4>
+        </div>
+
+
+        <label>Datum: @Model.Menu.Date.ToString("dd.MM.yyyy")</label>
+        <br />
+        <label>Malica: @Model.Menu.Name</label>
+        <br />
+
+
+        @foreach (var status in Model.Details.Select(m => m.Status).Distinct().OrderBy(o=>o))
+        {
+            <br />
+            @Html.Label("Status: " + status);
+                <table class="detailsTable" border="0">
+            @foreach (var item in Model.Details.Where(m => m.Status == status))
+            {
+                <tr>
+                    <td>@item.Username</td>
+                    <td>@item.Comment</td>
+                </tr>
+            }
+        </table>
+        }
+        <dl class="dl-horizontal">
+            @*<dt>
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Mobile)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Mobile)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Address)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Address)
+            </dd>*@
+
+        </dl>
+    </div>

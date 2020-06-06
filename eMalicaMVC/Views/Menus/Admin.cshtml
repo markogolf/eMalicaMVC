@@ -1,0 +1,66 @@
+﻿@model eMalicaMVC.ViewModels.MenuWeeklyViewModel
+@{
+    ViewBag.Title = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Seznam menijev za izbran teden</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        @Html.Label("Izbrani teden: ") @Html.DropDownList("Week", Model.Weeks, new { @class = "form-control", @style = "display:inline;width:auto" })
+    </div>
+    @if (this.User.IsInRole("admin"))
+    {
+<div class="col-md-4">
+    @Html.DropDownList("Users", Model.Users, new { @class = "form-control" })
+</div>
+        <div class="col-md-4">
+            @Html.ActionLink("Dodaj nov meni", "Create", null, new { @class = "btn btn-info" })
+        </div>
+    }
+
+</div>
+
+<div class="h4">Ponedeljek</div>
+@{ Html.RenderPartial("DayOfWeek", Model.Monday); }
+
+<div class="h4">Torek</div>
+@{ Html.RenderPartial("DayOfWeek", Model.Tuesday); }
+
+<div class="h4">Sreda</div>
+@{ Html.RenderPartial("DayOfWeek", Model.Wednesday); }
+
+<div class="h4">Četrtek</div>
+@{ Html.RenderPartial("DayOfWeek", Model.Thursday); }
+<div class="h4">Petek</div>
+@{ Html.RenderPartial("DayOfWeek", Model.Friday); }
+
+<script>
+
+    $(function () {
+        $("#Week").change(
+
+            function () {
+                var url = '@Html.Raw(Url.Action("Index", new { userId = Model.UserId, dateParam="CHANGEDATE" }))';
+
+                url = url.replace("CHANGEDATE", encodeURIComponent($(this).val()));
+
+                document.location = url;
+            }
+        )
+        $("#Users").change(
+
+            function () {
+                var url = '@Html.Raw(Url.Action("Admin", new {  userId = "change" }))';
+                url = url.replace("change", encodeURIComponent($(this).val()));
+                document.location = url;
+            }
+        )
+
+        $(".naroci").click(function () {
+            var komentar = prompt("Vnesi komentar");
+
+        })
+    })
+</script>

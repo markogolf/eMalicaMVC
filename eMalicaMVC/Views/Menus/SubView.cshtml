@@ -1,0 +1,77 @@
+﻿@model IEnumerable<eMalicaMVC.ViewModels.SubViewModel>
+
+@if (Model.Count() < 1)
+{
+    <div>ni malic</div>
+}
+
+@foreach (var item in Model)
+ {
+    <div class="row menuRow">
+        <div class="col-md-4">
+            @item.Name
+        </div>
+        @if (User.IsInRole("admin"))
+        {
+        <div class="col-md-1">
+            <a href="@Url.Action("CreateOrEdit", "Menus", new { id = item.Id, userId = item.UserId, dateParam = item.Date.ToString("dd-MM-yyyy") })">
+                <i class="fa fa-pencil-square-o" aria-hidden="true" style="color:#286090; font-size:large;"></i>
+            </a>
+            &nbsp;
+            <a href="@Url.Action("Delete", "Menus", new { id = item.Id, userId = item.UserId })" class="delete-link">
+                <i class="fa fa-trash" aria-hidden="true" style="color:#286090;font-size:large;"></i>
+            </a>
+        </div>
+        }
+        <div class="col-md-1">
+            @item.Price
+        </div>
+        <div class="col-md-4">
+            @*<img class="check @(item.MenuOrder?.Status == eMalicaMVC.Common.Enums.OrderStatus.Ordered ? "visible" : "hidden")" src="~/Content/check.png" />*@
+            @if (!item.IsDisabled)
+            {
+                using (Html.BeginForm("Order", "Menus", FormMethod.Post)) // form for ordering
+                {
+                    if (User.IsInRole("admin"))
+                    {
+                        @Html.TextBox("Comment", item.MenuOrder?.Comment);
+                    }
+
+                    @Html.Hidden("id", item.Id);
+                    @Html.Hidden("userId", item.UserId);
+                    @Html.Hidden("dateParam", item.Date.ToString("dd-MM-yyyy"));
+
+                    <input type="submit" value="Naroči" class="btn btn-primary" />
+                }
+            }
+            else if (item.MenuOrder != null && item.MenuOrder?.Status != eMalicaMVC.Common.Enums.OrderStatus.Cancelled)
+            {
+                <table border="0">
+                    <tr>
+                        <td>
+                            @if (User.IsInRole("admin"))
+                            {
+                                using (Html.BeginForm("SetOrderStatus", "Menus", FormMethod.Post))
+                                {
+                                    @Html.Hidden("orderID", item.MenuOrder.ID);
+                                    @Html.DropDownList("Status", item.Statuses, new { onchange = "this.form.submit();", @class = "form-control", style = "width:auto;display:inline-block;margin-right:5px;" })
+                                    @*<input type="submit" value="Spremeni status" class="btn btn-primary inline" />*@
+                                }
+                            }
+                        </td>
+                        <td>
+                            @Html.ActionLink("Prekliči", "Cancel", new { id = item.MenuOrder.ID, userId = item.UserId, dateParam=item.Date.ToString("dd-MM-yyyy") }, new { @class = "btn btn-danger" })
+                        </td>
+                    </tr>
+                </table>
+            }
+        </div>
+        <div class="col-md-2">
+            @if (item.MenuOrder != null)
+            {
+                @item.MenuOrder.Comment;
+            }
+        </div>
+    </div>
+    }
+    <br />

@@ -1,0 +1,56 @@
+﻿@model eMalicaMVC.ViewModels.MainViewModel
+@{
+    ViewBag.Title = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Seznam menijev za izbran teden</h2>
+<div class="row">
+    <div class="col-md-4">
+        @Html.Label("Izbrani teden: ") @Html.DropDownList("Week", Model.Weeks, new { @class = "form-control", @style = "display:inline;width:auto" })
+    </div>
+    @if (this.User.IsInRole("admin"))
+    {
+        <div class="col-md-4">
+            @Html.DropDownList("Users", Model.Users, new { @class = "form-control" })
+        </div>
+        <div class="col-md-4">
+            @Html.ActionLink("Dodaj nov meni", "CreateOrEdit", new { @class = "btn btn-info" })
+        </div>
+    }
+</div>
+<h4>Ponedeljek</h4>
+@{Html.RenderPartial("SubView", Model.Menus.Where(m => m.Date.DayOfWeek == DayOfWeek.Monday));}
+<h4>Torek</h4>
+@{ Html.RenderPartial("SubView", Model.Menus.Where(m => m.Date.DayOfWeek == DayOfWeek.Tuesday)); }
+<h4>Sreda</h4>
+@{ Html.RenderPartial("SubView", Model.Menus.Where(m => m.Date.DayOfWeek == DayOfWeek.Wednesday)); }
+<h4>Četrtek</h4>
+@{ Html.RenderPartial("SubView", Model.Menus.Where(m => m.Date.DayOfWeek == DayOfWeek.Thursday)); }
+<h4>Petek</h4>
+@{ Html.RenderPartial("SubView", Model.Menus.Where(m => m.Date.DayOfWeek == DayOfWeek.Friday)); }
+<script>
+    $(function () {
+        $("#Week").change(
+
+            function () {
+                var url = '@Html.Raw(Url.Action("Index", new { userId = Model.UserId, dateParam="CHANGEDATE" }))';
+
+                url = url.replace("CHANGEDATE", encodeURIComponent($(this).val()));
+
+                document.location = url;
+            }
+        )
+            $("#Users").change(
+
+            function () {
+                var url = '@Html.Raw(Url.Action("Index", new {  userId = "change", dateParam = "CHANGEDATE" }))';
+                    url = url.replace("change", encodeURIComponent($(this).val()));
+                    url = url.replace("CHANGEDATE", encodeURIComponent($('#Week').val()));
+                document.location = url;
+            }
+        )
+        $(".naroci").click(function () {
+            var komentar = prompt("Vnesi komentar");
+        })
+    })
+</script>
