@@ -75,13 +75,13 @@ namespace eMalicaMVC.Controllers
         }
 
         [HttpPost, Authorize(Roles = "admin")]
-        public ActionResult SetOrderStatus(int orderId, string status)
+        public ActionResult SetOrderStatus(int orderId, string status, string dateParam)
         {
             var order = db.GetOrder(orderId);
 
             db.SetOrderStatus(orderId, status);
 
-            return RedirectToAction("Index", new { userId = order.UserId });
+            return RedirectToAction("Index", new { userId = order.UserId, dateParam });
         }
       
         [HttpPost]
